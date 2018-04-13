@@ -6,17 +6,24 @@ require_relative 'repository_helper.rb'
 class InvoiceItemRepository
   include RepositoryHelper
   attr_reader :repository,
-              :parent
+              :parent,
+              :id,
+              :item_id,
+              :invoice_id,
+              :quantity,
+              :unit_price,
+              :created_at,
+              :updated_at
 
   def initialize(invoice_items, parent)
     @repository = invoice_items.map do |invoice_item|
       InvoiceItem.new(invoice_item, self)
     end
     @parent = parent
-    build_hash_tables
+    build_hash_table
   end
 
-  def build_hash_tables
+  def build_hash_table
     @id = @repository.group_by(&:id)
     @item_id = @repository.group_by(&:item_id)
     @invoice_id = @repository.group_by(&:invoice_id)
@@ -24,6 +31,7 @@ class InvoiceItemRepository
     @unit_price = @repository.group_by(&:unit_price)
     @created_at = @repository.group_by(&:created_at)
     @updated_at = @repository.group_by(&:updated_at)
+    @possible_revenue = @repository.group_by(&:possible_revenue)
   end
 
   def find_all_by_item_id(item_id)
@@ -31,15 +39,10 @@ class InvoiceItemRepository
     @item_id[item_id]
   end
 
-  def find_all_by_invoice_id(invoice_id)
-    return [] if @invoice_id[invoice_id].nil?
-    @invoice_id[invoice_id]
-  end
-
   def create(attributes)
     attributes[:id] = (@id.keys.last + 1)
     @repository << InvoiceItem.new(attributes, self)
-    build_hash_tables
+    build_hash_table
   end
 
   def update(id, attributes)
@@ -52,7 +55,7 @@ class InvoiceItemRepository
         invoice_item.invoice_items_specs[:updated_at] = Time.now
       end
     end
-    build_hash_tables
+    build_hash_table
   end
 
   def group_by_number_of_items
@@ -64,7 +67,7 @@ class InvoiceItemRepository
   def delete(id)
     item_to_delete = find_by_id(id)
     @repository.delete(item_to_delete)
-    build_hash_tables
+    build_hash_table
   end
 
   def inspect

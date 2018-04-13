@@ -53,4 +53,8 @@ class InvoiceItem
   def unit_price_to_dollars
     invoice_items_specs[:unit_price]
   end
+
+  def possible_revenue
+    invoice_items_specs[:unit_price] * invoice_items_specs[:quantity]
+  end
 end

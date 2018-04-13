@@ -48,7 +48,7 @@ class Customer
 
   def fully_paid_invoices
     invoices.map do |invoice|
-      invoice unless invoice.total_successful_invoices.nil?
+      invoice unless invoice.is_paid_in_full?.nil?
     end
   end
 end

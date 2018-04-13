@@ -65,13 +65,6 @@ class CustomerRepository
     build_hash_tables
   end
 
-  def top_spenders
-    @repository.map do |customer|
-      totals = customer.invoices.map(&:total_successful_invoices)
-      [customer, totals.flatten.compact.uniq.inject(:+)]
-    end
-  end
-
   def find_all_invoices_by_customer_id
     @parent.find_all_invoices_by_customer_id(id)
   end

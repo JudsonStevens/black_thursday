@@ -66,7 +66,7 @@ class InvoiceRepository
     build_hash_table
   end
 
-  def sort_by_invoice_totals
+  def sort_by_invoice_total_revenue
     @repository.sort_by(&:total)
   end
 

@@ -34,4 +34,14 @@ module RepositoryHelper
     return [] if @invoice_id[invoice_id].nil?
     @invoice_id[invoice_id]
   end
+
+  def find_by_name(name)
+    return nil if @name[name].nil?
+    @name[name].first
+  end
+
+  def find_all_by_name(name)
+    return [] if @name[name].nil?
+    @name[name]
+  end
 end
