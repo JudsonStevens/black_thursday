@@ -10,7 +10,7 @@ class Transaction
       invoice_id:                   transactions[:invoice_id].to_i,
       credit_card_number:           transactions[:credit_card_number].to_i,
       credit_card_expiration_date:  transactions[:credit_card_expiration_date],
-      result:                       transactions[:result].to_sym,
+      result:                       transactions[:result],
       created_at:                   Time.parse(transactions[:created_at].to_s),
       updated_at:                   Time.parse(transactions[:updated_at].to_s)
     }
@@ -26,7 +26,7 @@ class Transaction
   end
 
   def credit_card_number
-    @transaction_specs[:credit_card_number]
+    @transaction_specs[:credit_card_number].to_s
   end
 
   def credit_card_expiration_date
@@ -34,7 +34,7 @@ class Transaction
   end
 
   def result
-    @transaction_specs[:result]
+    @transaction_specs[:result].to_sym
   end
 
   def created_at

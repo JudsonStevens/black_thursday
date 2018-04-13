@@ -47,18 +47,19 @@ class TransactionRepository
         transaction.transaction_specs[:updated_at] = Time.now
       end
     end
+    build_hash_table
   end
 
   def create(attributes)
-    id_array = @repository.map(&:id)
-    new_id = id_array.max + 1
-    attributes[:id] = new_id.to_s
+    attributes[:id] = (@id.keys.last + 1)
     @repository << Transaction.new(attributes, self)
+    build_hash_table
   end
 
   def delete(id)
     transaction_to_delete = find_by_id(id)
     @repository.delete(transaction_to_delete)
+    build_hash_table
   end
 
   def group_transactions

@@ -9,7 +9,9 @@ class InvoiceRepository
               :id,
               :merchant_id,
               :created_at,
-              :updated_at
+              :updated_at,
+              :successful_status,
+              :failed_status
   def initialize(invoices, parent)
     @repository = invoices.map { |invoice| Invoice.new(invoice, self) }
     @parent = parent
@@ -23,6 +25,7 @@ class InvoiceRepository
     @merchant_id = @repository.group_by(&:merchant_id)
     @created_at = @repository.group_by(&:created_at)
     @updated_at = @repository.group_by(&:updated_at)
+    build_status_hash_table
   end
 
   def build_status_hash_table

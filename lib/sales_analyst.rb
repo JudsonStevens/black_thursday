@@ -186,13 +186,14 @@ class SalesAnalyst
 
   def invoice_total(invoice_id)
     all_items = @sales_engine.invoice_items.find_all_by_invoice_id(invoice_id)
-    all_items.map(&:unit_price).inject(:+)
+    all_items.map do |invoice_item|
+      invoice_item.quantity * invoice_item.unit_price
+    end.inject(:+)
   end
 
   def invoice_paid_in_full?(invoice_id)
     invoice = @sales_engine.invoices.find_by_id(invoice_id)
-    transactions = invoice.transactions
-    transactions.any? { |transaction| transaction.result == 'success' }
+    invoice.is_paid_in_full?
   end
 
   def best_invoice_by_quantity
