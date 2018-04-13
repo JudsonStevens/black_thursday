@@ -211,19 +211,23 @@ class SalesAnalyst
   end
 
   def quantity_by_unit_price(invoice_items)
-    result = invoice_items.map do |invoice_item|
+    invoice_items.map do |invoice_item|
       quantity = invoice_item.quantity.to_s
       unit_price = invoice_item.unit_price.to_s
       quantity.to_f * unit_price.to_f
     end
-    result.reduce(:+)
+  end
+
+  def add_totals(results)
+    results.reduce(:+)
   end
 
   def total_revenue_by_date(date)
     invoices = successful_invoices_by_date(date)
     ids = ids_of_successful_invoices_by_date(invoices).uniq
     invoice_items = successful_dated_invoice_ids(ids).flatten
-    quantity_by_unit_price(invoice_items).round(2)
+    results = quantity_by_unit_price(invoice_items)
+    add_totals(results).round(2)
   end
 #Justine end work on iteration 4
 end

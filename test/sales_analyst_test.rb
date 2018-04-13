@@ -131,9 +131,20 @@ class SalesAnalystTest < MiniTest::Test
     dated_success = @s.successful_invoices_by_date(Time.parse("2012-03-27"))
     ids = @s.ids_of_successful_invoices_by_date(dated_success)
     invoice_items = @s.successful_dated_invoice_ids(ids)
-    result = invoice_items.flatten
+    items = invoice_items.flatten
+    result = @s.quantity_by_unit_price(items)
 
-    assert_equal 3471.59, @s.quantity_by_unit_price(result)
+    assert_equal 2, result.length
+  end
+
+  def test_it_can_add_results_of_quantity_by_unit_price
+    dated_success = @s.successful_invoices_by_date(Time.parse("2012-03-27"))
+    ids = @s.ids_of_successful_invoices_by_date(dated_success)
+    invoice_items = @s.successful_dated_invoice_ids(ids)
+    items = invoice_items.flatten
+    result = @s.quantity_by_unit_price(items)
+
+    assert_equal 3471.59, @s.add_totals(result)
   end
 
   def test_it_can_return_total_revenue_by_date
@@ -142,7 +153,10 @@ class SalesAnalystTest < MiniTest::Test
     assert_equal 3471.59, @s.total_revenue_by_date(date)
   end
 
+  def test_
+
   def test_reports_top_revenue_earners_by_number_given
+    skip
     expected = @s.top_revenue_earners(10)
     first = expected.first
     last = expected.last
