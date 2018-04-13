@@ -141,5 +141,29 @@ class SalesAnalystTest < MiniTest::Test
 
     assert_equal 3471.59, @s.total_revenue_by_date(date)
   end
+
+  def test_reports_top_revenue_earners_by_number_given
+    expected = @s.top_revenue_earners(10)
+    first = expected.first
+    last = expected.last
+
+    assert_equal 10, expected.length
+    assert_equal Merchant, first.class
+    assert_equal 12334634, first.id
+    assert_equal 12335747, last.id
+  end
+  # it "#top_revenue_earners(x) returns the top x merchants ranked by revenue" do
+  #   expected = sales_analyst.top_revenue_earners(10)
+  #   first = expected.first
+  #   last = expected.last
+  #
+  #   expect(expected.length).to eq 10
+  #
+  #   expect(first.class).to eq Merchant
+  #   expect(first.id).to eq 12334634
+  #
+  #   expect(last.class).to eq Merchant
+  #   expect(last.id).to eq 12335747
+  # end
 # Justine end work on iteration 4
 end

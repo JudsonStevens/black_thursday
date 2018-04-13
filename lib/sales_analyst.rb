@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'time'
+require 'pry'
 # Sales analyst class to perform analysis.
 class SalesAnalyst
   attr_reader :sales_engine
@@ -182,10 +183,9 @@ class SalesAnalyst
 # Justine start work on iteration 4
 
   def transactions_by_date(date)
-    date1 = date.to_date
     transactions = @sales_engine.transactions.all
-    dated = transactions.find_all do |transaction|
-      transaction.created_at.to_date == date1
+    transactions.find_all do |transaction|
+      transaction.created_at.to_date == date.to_date
     end
   end
 
@@ -197,7 +197,7 @@ class SalesAnalyst
 
   def successful_invoices_by_date(date)
     dated = transactions_by_date(date)
-    matches = dated & successful_transactions
+    dated & successful_transactions
   end
 
   def ids_of_successful_invoices_by_date(matches)
@@ -223,7 +223,7 @@ class SalesAnalyst
     invoices = successful_invoices_by_date(date)
     ids = ids_of_successful_invoices_by_date(invoices).uniq
     invoice_items = successful_dated_invoice_ids(ids).flatten
-    quantity_by_unit_price(invoice_items)
+    quantity_by_unit_price(invoice_items).round(2)
   end
 #Justine end work on iteration 4
 end
