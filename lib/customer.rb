@@ -8,8 +8,8 @@ class Customer
       id:           customers[:id].to_i,
       first_name:   customers[:first_name],
       last_name:    customers[:last_name],
-      created_at:   customers[:created_at],
-      updated_at:   customers[:updated_at]
+      created_at:   Time.parse(customers[:created_at].to_s),
+      updated_at:   Time.parse(customers[:updated_at].to_s)
     }
     @parent = parent
   end
@@ -35,11 +35,11 @@ class Customer
   end
 
   def created_at
-    Time.parse(@customer_specs[:created_at].to_s)
+    @customer_specs[:created_at]
   end
 
   def updated_at
-    Time.parse(@customer_specs[:updated_at].to_s)
+    @customer_specs[:updated_at]
   end
 
   def invoices

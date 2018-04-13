@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
 require_relative 'transaction'
+require_relative 'repository_helper'
 # This class holds our transactions and gives us methods to interact with them.
 class TransactionRepository
+  include RepositoryHelper
   attr_reader :repository,
               :parent
   def initialize(transactions, parent)
@@ -10,28 +12,29 @@ class TransactionRepository
       Transaction.new(transaction, parent)
     end
     @parent = parent
+    build_hash_table
   end
 
-  def all
-    @repository
-  end
-
-  def find_by_id(id)
-    @repository.find { |transaction| transaction.id == id }
-  end
-
-  def find_all_by_invoice_id(invoice_id)
-    @repository.find_all { |transaction| transaction.invoice_id == invoice_id }
+  def build_hash_table
+    @id = @repository.group_by(&:id)
+    @invoice_id = @repository.group_by(&:invoice_id)
+    @credit_card_number = @repository.group_by(&:credit_card_number)
+    @credit_card_expiration_date = @repository.group_by(
+      &:credit_card_expiration_date
+    )
+    @result = @repository.group_by(&:result)
+    @created_at = @repository.group_by(&:created_at)
+    @updated_at = @repository.group_by(&:updated_at)
   end
 
   def find_all_by_credit_card_number(credit_card_num)
-    @repository.find_all do |transaction|
-      transaction.credit_card_number == credit_card_num
-    end
+    return [] if @credit_card_number[credit_card_num].nil?
+    @credit_card_number[credit_card_num]
   end
 
   def find_all_by_result(result)
-    @repository.find_all { |transaction| transaction.result == result }
+    return [] if @result[result].nil?
+    @result[result]
   end
 
   def update(id, attributes)

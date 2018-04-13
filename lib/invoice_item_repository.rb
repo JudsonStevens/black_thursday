@@ -27,10 +27,12 @@ class InvoiceItemRepository
   end
 
   def find_all_by_item_id(item_id)
+    return [] if @item_id[item_id].nil?
     @item_id[item_id]
   end
 
   def find_all_by_invoice_id(invoice_id)
+    return [] if @invoice_id[invoice_id].nil?
     @invoice_id[invoice_id]
   end
 

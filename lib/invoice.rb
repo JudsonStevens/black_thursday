@@ -11,8 +11,8 @@ class Invoice
       customer_id:  invoices_data[:customer_id].to_i,
       merchant_id:  invoices_data[:merchant_id].to_i,
       status:       invoices_data[:status],
-      created_at:   invoices_data[:created_at],
-      updated_at:   invoices_data[:updated_at]
+      created_at:   Time.parse(invoices_data[:created_at].to_s),
+      updated_at:   Time.parse(invoices_data[:updated_at].to_s)
     }
     @parent = parent
   end
@@ -34,11 +34,11 @@ class Invoice
   end
 
   def created_at
-    Time.parse(@invoice_specs[:created_at].to_s)
+    @invoice_specs[:created_at]
   end
 
   def updated_at
-    Time.parse(@invoice_specs[:updated_at].to_s)
+    @invoice_specs[:updated_at]
   end
 
   def merchant
