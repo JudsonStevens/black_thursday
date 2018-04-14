@@ -138,6 +138,13 @@ class SalesAnalystTest < MiniTest::Test
     assert_equal expected, actual
   end
 
+  def test_it_can_return_a_hash_of_invoice_count_by_day
+    expected = [6, 729]
+    actual = @s.day_count_hash.first
+
+    assert_equal expected, actual
+  end
+
   def test_it_can_return_the_standard_deviation_of_invoices_by_weekday
     expected = 16.73
     actual = @s.standard_deviation_of_invoices_by_weekday
@@ -148,6 +155,13 @@ class SalesAnalystTest < MiniTest::Test
   def test_it_can_return_invoice_status
     expected = 13.5
     actual = @s.invoice_status(:returned)
+
+    assert_equal expected, actual
+  end
+
+  def test_it_can_return_invoice_total
+    expected = 3471.59
+    actual = @s.invoice_total(1).to_f
 
     assert_equal expected, actual
   end

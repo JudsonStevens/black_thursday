@@ -95,16 +95,17 @@ class SalesAnalyst
   end
 
   def invoice_status(status_symbol)
-    status_hash = find_status_hash
-    value = status_hash.select { |key, _| key == status_symbol }.values
-    ((value[0].to_f / status_hash.values.inject(:+)) * 100).round(2)
+    amount = @sales_engine.invoices.status[status_symbol].length
+    total = @sales_engine.invoices.status.values.flatten.length
+    ((amount.to_f / total) * 100).round(2)
   end
 
-  def find_status_hash
-    all_status = @sales_engine.invoices.all.map(&:status)
-    group = all_status.group_by { |status| status }
-    group.each { |key, value| group[key] = value.length }
-  end
+  # def find_status_hash(status_symbol)
+  #   @sales_engine.invoices.status[status_symbol]
+  #   all_status = @sales_engine.invoices.all.map(&:status)
+  #   group = all_status.group_by { |status| status }
+  #   group.each { |key, value| group[key] = value.length }
+  # end
 
   def invoice_total(invoice_id)
     items = @sales_engine.invoice_items.find_all_by_invoice_id(invoice_id)

@@ -17,7 +17,6 @@ class InvoiceRepository
     @repository = invoices.map { |invoice| Invoice.new(invoice, self) }
     @parent = parent
     build_hash_table
-    build_status_hash_table
   end
 
   def build_hash_table
