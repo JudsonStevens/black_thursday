@@ -155,17 +155,19 @@ class SalesAnalystTest < MiniTest::Test
 
   def test_it_can_provide_total_for_each_invoice_item
     transactions = @s.successful_transactions
-    invoices = @s.invoices_by_transactions(transations)
-    invoice_items = @s.invoice_items_by_invoices(invoices)
-    expected = @
+    expected = @s.invoices_by_transactions(transactions)
 
-
+    assert_equal 11, expected.length
+    assert_equal Invoice, expected[0].class
   end
 
-  def test_it_can_add_totals_to_invoice_items
-    skip
-    assert_equal 5570.75,
-  end
+  # invoice_items = @s.invoice_items_by_invoices(invoices)
+  # expected = @s.
+
+  # def test_it_can_add_totals_to_invoice_items
+  #   skip
+  #   assert_equal 5570.75,
+  # end
 
   def test_reports_top_revenue_earners_by_number_given
     skip

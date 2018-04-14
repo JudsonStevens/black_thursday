@@ -229,5 +229,18 @@ class SalesAnalyst
     results = quantity_by_unit_price(invoice_items)
     add_totals(results).round(2)
   end
+
+  def invoices_by_transactions(transactions)
+    transactions.map do |transaction|
+      id = transaction.invoice_id
+      @sales_engine.invoices.find_by_id(id)
+    end
+  end
+
+  # def top_revenue_earners(number_of_earners = 20)
+  #   transactions = successful_transactions
+  #   invoices = invoices_by_transactions(transactions)
+  #
+  # end
 #Justine end work on iteration 4
 end
