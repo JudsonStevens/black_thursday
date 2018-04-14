@@ -153,12 +153,21 @@ class SalesAnalystTest < MiniTest::Test
     assert_equal 3471.59, @s.total_revenue_by_date(date)
   end
 
-  def test_it_can_provide_total_for_each_invoice_item
+  def test_it_can_pull_successful_transactions_invoices
     transactions = @s.successful_transactions
     expected = @s.invoices_by_transactions(transactions)
 
     assert_equal 11, expected.length
     assert_equal Invoice, expected[0].class
+  end
+
+  def test_it_can_pull_invoices_items
+    transactions = @s.successful_transactions
+    invoices = @s.invoices_by_transactions(transactions)
+    expected = @s.invoice_items_by_invoices(invoices)
+
+    assert_equal 3, expected.length
+    # assert_instance_of InvoiceItem, expected[0].class
   end
 
   # invoice_items = @s.invoice_items_by_invoices(invoices)

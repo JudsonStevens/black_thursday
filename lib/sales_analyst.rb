@@ -237,10 +237,18 @@ class SalesAnalyst
     end
   end
 
+  def invoice_items_by_invoices(invoices)
+    invoices.map do |invoice|
+      invoice_id = invoice.id
+      @sales_engine.invoices.find_all_items_by_invoice_id(invoice_id)
+      binding.pry
+    end
+  end
+
   # def top_revenue_earners(number_of_earners = 20)
   #   transactions = successful_transactions
   #   invoices = invoices_by_transactions(transactions)
-  #
+  #   invoice_items = invoice_items_by_invoices(invoices)
   # end
 #Justine end work on iteration 4
 end
