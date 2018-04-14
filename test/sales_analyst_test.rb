@@ -107,6 +107,9 @@ class SalesAnalystTest < MiniTest::Test
     date = Time.parse("2012-03-27")
     expected = @s.transactions_by_date(date)
 
+    ase
+  end
+
 
   def test_invoices_can_return_successful_transactions
     expected = true
@@ -120,7 +123,7 @@ class SalesAnalystTest < MiniTest::Test
     skip
     expected = ''
     actual = @se.invoice_items.group_invoice_items_by_number_of_items_and_invoice_id
-    
+
     assert_equal 3, expected.length
   end
 
@@ -168,5 +171,4 @@ class SalesAnalystTest < MiniTest::Test
 
     assert_equal 3471.59, @s.total_revenue_by_date(date)
   end
-# Justine end work on iteration 4
 end

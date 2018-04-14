@@ -31,13 +31,25 @@ class MerchantRepository
 
   def create(attributes)
     attributes[:id] = (@id.keys.sort.last + 1)
-    @merchant_list << Merchant.new(attributes, self)
+    attributes[:created_at] = Time.now
+    attributes[:updated_at] = Time.now
+    @repository << Merchant.new(attributes, self)
     build_hash_table
+  end
+
+  def find_by_name(name)
+    @repository.find { |merchant| merchant.searchable_name == name.downcase }
+  end
+
+  def find_all_by_name(name)
+    @repository.find_all do |merchant|
+      merchant.searchable_name.include?(name.downcase)
+    end
   end
 
   def delete(id)
     merchant_to_delete = find_by_id(id)
-    @merchant_list.delete(merchant_to_delete)
+    @repository.delete(merchant_to_delete)
     build_hash_table
   end
 
