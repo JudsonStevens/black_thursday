@@ -153,7 +153,19 @@ class SalesAnalystTest < MiniTest::Test
     assert_equal 3471.59, @s.total_revenue_by_date(date)
   end
 
-  def test_
+  def test_it_can_provide_total_for_each_invoice_item
+    transactions = @s.successful_transactions
+    invoices = @s.invoices_by_transactions(transations)
+    invoice_items = @s.invoice_items_by_invoices(invoices)
+    expected = @
+
+
+  end
+
+  def test_it_can_add_totals_to_invoice_items
+    skip
+    assert_equal 5570.75,
+  end
 
   def test_reports_top_revenue_earners_by_number_given
     skip

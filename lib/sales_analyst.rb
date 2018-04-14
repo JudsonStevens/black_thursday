@@ -215,7 +215,7 @@ class SalesAnalyst
       quantity = invoice_item.quantity.to_s
       unit_price = invoice_item.unit_price.to_s
       quantity.to_f * unit_price.to_f
-    endm
+    end
   end
 
   def add_totals(results)
