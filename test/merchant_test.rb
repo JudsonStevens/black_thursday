@@ -62,11 +62,11 @@ class MerchantTest < Minitest::Test
   end
 
   def test_it_returns_merchants_creation_time
-    assert_equal '2010-12-10', merchant.created_at
+    assert_equal '2010-12-10', merchant.created_at.strftime('%Y-%m-%d')
   end
 
   def test_it_returns_merchants_updated_time
-    assert_equal '2011-12-04', merchant.updated_at
+    assert_equal '2011-12-04', merchant.updated_at.strftime('%Y-%m-%d')
   end
 
   def test_it_finds_items_by_merchant_id

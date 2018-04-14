@@ -39,10 +39,11 @@ class InvoiceItemRepositorytest < Minitest::Test
     assert_equal 263519844, expected.item_id
   end
 
-  def test_it_returns_nil_for_invalid_invoice_item_by_item_id
-    expected = @invoice_items.find_all_by_item_id(22334455)
+  def test_it_returns_empty_array_for_invalid_invoice_item_by_item_id
+    expected = []
+    actual = @invoice_items.find_all_by_item_id(22334466)
 
-    assert_nil expected
+    assert_equal expected, actual
   end
 
   def test_it_finds_invoice_item_by_item_id
@@ -51,10 +52,11 @@ class InvoiceItemRepositorytest < Minitest::Test
     assert_equal 263519844, expected.first.item_id
   end
 
-  def test_it_returns_nil_for_invalid_invoice_item_by_invoice_id
-    expected = @invoice_items.find_all_by_invoice_id(8)
+  def test_it_returns_empty_array_for_invalid_invoice_item_by_invoice_id
+    expected = []
+    actual = @invoice_items.find_all_by_invoice_id(102)
 
-    assert_nil expected
+    assert_equal expected, actual
   end
 
   def test_it_finds_invoice_item_by_invoice_id

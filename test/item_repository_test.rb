@@ -34,7 +34,7 @@ class ItemRepositoryTest < Minitest::Test
   end
 
   def test_it_returns_nil_for_invalid_id
-    expected = items.find_by_id(1)
+    expected = items.find_by_id(100)
 
     assert_nil expected
   end
@@ -47,9 +47,10 @@ class ItemRepositoryTest < Minitest::Test
   end
 
   def test_it_returns_empty_array_when_description_has_no_match
-    expected = items.find_all_with_description('weasel watch')
+    expected = []
+    actual = items.find_all_with_description('weasel watch')
 
-    assert_nil expected
+    assert_equal expected, actual
   end
 
   def test_it_finds_item_by_description

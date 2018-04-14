@@ -11,6 +11,11 @@ module RepositoryHelper
     @id[id].first
   end
 
+  def find_all_by_id(id)
+    return [] if @id[id].nil?
+    @id[id]
+  end
+
   def find_all_by_merchant_id(merchant_id)
     return [] if @merchant_id[merchant_id].nil?
     @merchant_id[merchant_id]

@@ -6,7 +6,14 @@ require_relative 'repository_helper'
 class TransactionRepository
   include RepositoryHelper
   attr_reader :repository,
-              :parent
+              :parent,
+              :id,
+              :invoice_id,
+              :credit_card_number,
+              :credit_card_expiration_date,
+              :result,
+              :created_at,
+              :updated_at
   def initialize(transactions, parent)
     @repository = transactions.map do |transaction|
       Transaction.new(transaction, parent)
@@ -28,8 +35,8 @@ class TransactionRepository
   end
 
   def find_all_by_credit_card_number(credit_card_num)
-    return [] if @credit_card_number[credit_card_num].nil?
-    @credit_card_number[credit_card_num]
+    return [] if @credit_card_number[credit_card_num.to_s].nil?
+    @credit_card_number[credit_card_num.to_s]
   end
 
   def find_all_by_result(result)

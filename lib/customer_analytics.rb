@@ -77,17 +77,17 @@ module CustomerAnalytics
     invoices.sort_by { |_, value| value || 0 }.reverse.flatten.first
   end
 
-  def highest_volume_items(customer_id)
-    high_volume = invoices_with_item_amounts(customer_id).group_by(&:last).max
-    calculate_high_volume_items(high_volume)
-  end
-
   def invoices_with_item_amounts(customer_id)
     invoices_by_customer_id(customer_id).map do |invoice|
       invoice.invoice_items.map do |invoice_item|
         [invoice_item.item_id, invoice_item.quantity]
       end
     end.compact.flatten(1)
+  end
+
+  def highest_volume_items(customer_id)
+    high_volume = invoices_with_item_amounts(customer_id).group_by(&:last).max
+    calculate_high_volume_items(high_volume)
   end
 
   def calculate_high_volume_items(high_volume_array)

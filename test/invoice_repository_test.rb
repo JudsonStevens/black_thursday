@@ -15,7 +15,8 @@ class InvoiceRepositoryTest < MiniTest::Test
                                :merchants => './fixtures/merchants_test.csv',
                                :items => './fixtures/items_test.csv',
                                :customers => './fixtures/customers_test.csv',
-                               :transactions => './fixtures/transactions_test.csv'
+                               :transactions => './fixtures/transactions_test.csv',
+                               :invoice_items => './fixtures/invoice_items_test.csv'
       })
     @i = se.invoices
   end
@@ -54,7 +55,7 @@ class InvoiceRepositoryTest < MiniTest::Test
 
   def test_it_can_create_a_new_invoice
     expected = 10
-    @i.create(merchant_id: 15, customer_id: 22, created_at: Time.now, updated_at: Time.now)
+    @i.create(merchant_id: 15, customer_id: 22, status: 'shipped', created_at: Time.now, updated_at: Time.now)
     actual = @i.find_by_id(10).id
 
     assert_equal expected, actual
@@ -82,7 +83,7 @@ class InvoiceRepositoryTest < MiniTest::Test
   end
 
   def test_it_can_find_transaction_by_invoice_id
-    expected = 'success'
+    expected = :success
     actual = @i.find_transaction_by_invoice_id(2179).first.result
 
     assert_equal expected, actual

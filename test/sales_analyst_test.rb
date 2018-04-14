@@ -17,8 +17,8 @@ class SalesAnalystTest < MiniTest::Test
       merchants:  './data/merchants.csv',
       invoices:   './data/invoices.csv',
       customers:  './data/customers.csv',
-      transactions: './fixtures/transactions_test.csv',
-      invoice_items: './fixtures/invoice_items_test.csv'
+      transactions: './data/transactions.csv',
+      invoice_items: './data/invoice_items.csv'
     )
     @s = SalesAnalyst.new(@se)
   end
@@ -97,14 +97,14 @@ class SalesAnalystTest < MiniTest::Test
   end
 
   def test_it_can_return_paid_in_full_invoice
-    expected = false
+    expected = true
     actual = @s.invoice_paid_in_full?(16)
 
     assert_equal expected, actual
   end
 
   def test_it_can_find_the_invoice_total
-    expected = 3471.59
+    expected = 21067.77
     actual = @s.invoice_total(1).to_f.round(2)
 
     assert_equal expected, actual
@@ -159,9 +159,42 @@ class SalesAnalystTest < MiniTest::Test
     assert_equal expected, actual
   end
 
-  def test_it_can_return_invoice_total
-    expected = 3471.59
-    actual = @s.invoice_total(1).to_f
+  def test_it_can_return_one_time_buyers
+    expected = 27
+    actual = @s.one_time_buyers.first.id
+
+    assert_equal expected, actual
+  end
+
+  def test_it_can_return_one_time_buyers_top_item
+    expected = 263442077
+    actual = @s.one_time_buyers_top_items.first.id
+
+    assert_equal expected, actual
+  end
+
+  def test_it_returns_top_twenty_buyers
+    expected = 20
+    actual = @s.top_buyers.length
+
+    assert_equal expected, actual
+
+    expected = 313
+    actual = @s.top_buyers.first.id
+
+    assert_equal expected, actual
+  end
+
+  def test_it_returns_top_spenders
+    expected = 1
+    actual = @s.top_spenders.first[0].id
+
+    assert_equal expected, actual
+  end
+
+  def test_it_returns_top_merchants_by_customer_id
+    expected = 12335319
+    actual = @s.top_merchant_for_customer(15).id
 
     assert_equal expected, actual
   end
