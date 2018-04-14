@@ -11,7 +11,8 @@ class InvoiceRepository
               :created_at,
               :updated_at,
               :successful_status,
-              :failed_status
+              :failed_status,
+              :status
   def initialize(invoices, parent)
     @repository = invoices.map { |invoice| Invoice.new(invoice, self) }
     @parent = parent
@@ -25,10 +26,11 @@ class InvoiceRepository
     @merchant_id = @repository.group_by(&:merchant_id)
     @created_at = @repository.group_by(&:created_at)
     @updated_at = @repository.group_by(&:updated_at)
-    build_status_hash_table
+    @status = @repository.group_by(&:status)
+    build_payment_status_hash_table
   end
 
-  def build_status_hash_table
+  def build_payment_status_hash_table
     @successful_status = @repository.group_by(&:is_paid_in_full?)
     @failed_status = @repository.group_by do |invoice|
       !invoice.is_paid_in_full?

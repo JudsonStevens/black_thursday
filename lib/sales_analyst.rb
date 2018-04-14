@@ -26,18 +26,16 @@ class SalesAnalyst
   def golden_items
     std_dev = standard_deviation_of_item_price
     average = average_average_price_per_merchant
-    price_of_item = average + (2 * std_dev)
-    price_range = price_of_item.to_i..find_max_price
+    price_range = (average + (2 * std_dev)).to_i..find_max_price
     @sales_engine.items.find_all_by_price_in_range(price_range)
   end
 
   def merchants_with_high_item_count
     std_dev = average_items_per_merchant_standard_deviation
     average = average_items_per_merchant
-    amount_of_items = average + std_dev
     @sales_engine.merchants.all.map do |merchant|
       amount = @sales_engine.merchants.find_by_id(merchant.id).items.length
-      merchant if amount > amount_of_items
+      merchant if amount > (average + std_dev)
     end.compact
   end
 
@@ -57,20 +55,18 @@ class SalesAnalyst
   def top_merchants_by_invoice_count
     std_dev = average_invoices_per_merchant_standard_deviation
     average = average_invoices_per_merchant
-    bottom_of_range = (std_dev * 2) + average
     @sales_engine.merchants.all.map do |merchant|
       amount = @sales_engine.merchants.find_by_id(merchant.id).invoices.length
-      merchant if amount > bottom_of_range
+      merchant if amount > ((std_dev * 2) + average)
     end.compact
   end
 
   def bottom_merchants_by_invoice_count
     std_dev = average_invoices_per_merchant_standard_deviation
     average = average_invoices_per_merchant
-    bottom_of_range = average - (std_dev * 2)
     @sales_engine.merchants.all.map do |merchant|
       amount = @sales_engine.merchants.find_by_id(merchant.id).invoices.length
-      merchant if amount < bottom_of_range
+      merchant if amount < (average - (std_dev * 2))
     end.compact
   end
 
@@ -81,9 +77,8 @@ class SalesAnalyst
   def find_top_days
     average = day_count_hash.values.inject(:+) / 7
     std_dev = standard_deviation_of_invoices_by_weekday
-    amount = std_dev + average
     day_count_hash.select do |_, value|
-      value > amount.round(0)
+      value > (std_dev + average).round(0)
     end
   end
 
