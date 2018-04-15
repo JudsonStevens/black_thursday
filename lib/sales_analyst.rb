@@ -240,8 +240,7 @@ class SalesAnalyst
   def invoice_items_by_invoices(invoices)
     invoices.map do |invoice|
       invoice_id = invoice.id
-      @sales_engine.invoices.find_all_items_by_invoice_id(invoice_id)
-      binding.pry
+      @sales_engine.invoice_items.find_all_by_invoice_id(invoice_id)
     end
   end
 
