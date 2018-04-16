@@ -179,6 +179,23 @@ class SalesAnalystTest < MiniTest::Test
     assert_equal 5, expected.length
     assert_equal 444.68, expected[0].invoice_items_specs[:total]
   end
+
+  def test_it_can_get_invoice_items_ids_by_merchant
+    expected = @s.merchant_invoice_items
+
+    assert_instance_of Hash, expected
+    assert_instance_of Array, expected[12334633]
+  end
+
+  def test_it_can_get_totals_for_each_merchant_invoice_list
+    transactions = @s.successful_transactions
+    invoices = @s.invoices_by_transactions(transactions)
+    invoice_items = @s.invoice_items_by_invoices(invoices)
+    totaled_items = @s.invoice_items_total(invoice_items)
+    expected = @s.merchant_totals(totaled_items)
+
+    assert_instance_of Hash, expected
+  end
   # invoice_items = @s.invoice_items_by_invoices(invoices)
   # expected = @s.
 

@@ -251,11 +251,23 @@ class SalesAnalyst
   def invoice_items_total(invoice_items)
     invoice_items.map do |invoice_item|
       total_amount = quantity_by_unit_price_math(invoice_item)
-      invoice_item.invoice_items_specs.store(:total,total_amount)
+      invoice_item.invoice_items_specs.store(:total, total_amount)
       invoice_item
     end
   end
 
+  def merchant_invoice_items
+    invoices = invoices_by_transactions(successful_transactions)
+    invoices.group_by do |invoice|
+      invoice.merchant_id
+    end
+
+  end
+
+  # def merchant_totals(totaled_items)
+  #   merchant_invoice_items.group_by do |merchant|
+  #     merchant.
+  # end
   # def top_revenue_earners(number_of_earners = 20)
   #   transactions = successful_transactions
   #   invoices = invoices_by_transactions(transactions)
