@@ -234,14 +234,14 @@ class SalesAnalyst
     transactions.map do |transaction|
       id = transaction.invoice_id
       @sales_engine.invoices.find_by_id(id)
-    end
+    end.compact
   end
 
   def invoice_items_by_invoices(invoices)
     invoices.map do |invoice|
       invoice_id = invoice.id
       @sales_engine.invoice_items.find_all_by_invoice_id(invoice_id)
-    end
+    end.flatten
   end
 
   # def top_revenue_earners(number_of_earners = 20)

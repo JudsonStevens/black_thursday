@@ -15,7 +15,7 @@ class SalesAnalystTest < MiniTest::Test
     @se = SalesEngine.from_csv(
       items:      './data/items.csv',
       merchants:  './data/merchants.csv',
-      invoices:   './data/invoices.csv',
+      invoices:   './fixtures/invoices_test.csv',
       customers:  './data/customers.csv',
       transactions: './fixtures/transactions_test.csv',
       invoice_items: './fixtures/invoice_items_test.csv'
@@ -157,20 +157,29 @@ class SalesAnalystTest < MiniTest::Test
     transactions = @s.successful_transactions
     expected = @s.invoices_by_transactions(transactions)
 
-    assert_equal 11, expected.length
+    assert_equal 3, expected.length
     assert_instance_of Invoice, expected[0]
   end
 
   def test_it_can_pull_invoices_items
-    skip
     transactions = @s.successful_transactions
     invoices = @s.invoices_by_transactions(transactions)
     expected = @s.invoice_items_by_invoices(invoices)
 
-    assert_equal 11, expected.length
-    assert_instance_of InvoiceItem, expected[0].class
+    assert_equal 5, expected.length
+    assert_instance_of InvoiceItem, expected[0]
   end
 
+  def test_it_can_find_total_cost_of_each_invoice_item
+    transactions = @s.successful_transactions
+    invoices = @s.invoices_by_transactions(transactions)
+    invoice_items = @s.invoice_items_by_invoices(invoices)
+    expected = @s.invoice_items_total(invoice_items)
+
+    assert_equal 5, expected.length
+    assert_instance_of InvoiceItem, expected[0]
+    assert_equal 444.68, 
+  end
   # invoice_items = @s.invoice_items_by_invoices(invoices)
   # expected = @s.
 
