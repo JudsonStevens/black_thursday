@@ -256,14 +256,36 @@ class SalesAnalyst
     end
   end
 
-  def merchant_invoice_items
-    invoices = invoices_by_transactions(successful_transactions)
-    invoices.group_by do |invoice|
-      invoice.merchant_id
+  def add_invoice_totals(totaled_items)
+    ids = totaled_items.group_by do |invoice_item|
+      invoice_item.invoice_id
     end
-
+    merchant_invoice_item_totals(ids)
+  end
+  
+  def merchant_invoice_item_totals(merchant_ids)
+    merchant_totals = {}
+    merchant_ids.each do |key, value|
+      totals = value.map { |item| item.invoice_items_specs[:total] }
+      value = add_totals(totals)
+      merchant_totals[key] = value
+    end
+    merchant_totals
   end
 
+  def merchant_invoice_items
+    invoices = invoices_by_transactions(successful_transactions)
+    merchants_by_invoices = invoices.group_by do |invoice|
+      invoice.merchant_id
+    end
+  end
+  #
+  # def merchant_invoice_id(merchants_by_invoices)
+  #   merchants_by_invoices.each do |merchant_id, invoice_array|
+  #     merchant_id = merchant_id
+  #     invoice_array = merchants_by_invoices.map { |invoice| invoice.id }
+  #   end
+  # end
   # def merchant_totals(totaled_items)
   #   merchant_invoice_items.group_by do |merchant|
   #     merchant.

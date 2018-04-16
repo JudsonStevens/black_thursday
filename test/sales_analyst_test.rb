@@ -154,16 +154,14 @@ class SalesAnalystTest < MiniTest::Test
   end
 
   def test_it_can_pull_successful_transactions_invoices
-    transactions = @s.successful_transactions
-    expected = @s.invoices_by_transactions(transactions)
+    expected = @s.invoices_by_transactions(@s.successful_transactions)
 
     assert_equal 3, expected.length
     assert_instance_of Invoice, expected[0]
   end
 
   def test_it_can_pull_invoices_items
-    transactions = @s.successful_transactions
-    invoices = @s.invoices_by_transactions(transactions)
+    invoices = @s.invoices_by_transactions(@s.successful_transactions)
     expected = @s.invoice_items_by_invoices(invoices)
 
     assert_equal 5, expected.length
@@ -171,13 +169,23 @@ class SalesAnalystTest < MiniTest::Test
   end
 
   def test_it_can_find_total_cost_of_each_invoice_item
-    transactions = @s.successful_transactions
-    invoices = @s.invoices_by_transactions(transactions)
+    invoices = @s.invoices_by_transactions(@s.successful_transactions)
     invoice_items = @s.invoice_items_by_invoices(invoices)
     expected = @s.invoice_items_total(invoice_items)
 
     assert_equal 5, expected.length
     assert_equal 444.68, expected[0].invoice_items_specs[:total]
+  end
+
+  def test_it_can_group_invoice_items_by_id
+    invoices = @s.invoices_by_transactions(@s.successful_transactions)
+    invoice_items = @s.invoice_items_by_invoices(invoices)
+    totaled_items = @s.invoice_items_total(invoice_items)
+    expected = @s.add_invoice_totals(totaled_items)
+
+    assert_equal 2, expected.length
+    assert_instance_of Hash, expected
+    assert_equal 6943.18, expected[1]
   end
 
   def test_it_can_get_invoice_items_ids_by_merchant
@@ -187,15 +195,24 @@ class SalesAnalystTest < MiniTest::Test
     assert_instance_of Array, expected[12334633]
   end
 
-  def test_it_can_get_totals_for_each_merchant_invoice_list
-    transactions = @s.successful_transactions
-    invoices = @s.invoices_by_transactions(transactions)
-    invoice_items = @s.invoice_items_by_invoices(invoices)
-    totaled_items = @s.invoice_items_total(invoice_items)
-    expected = @s.merchant_totals(totaled_items)
+
+  def test_it_can_set_list_of_invoices_per_merchant
+    skip
+    merchants_by_invoices = @s.merchant_invoice_items
+    expected = merchant_invoice_id(merchants_by_invoices)
 
     assert_instance_of Hash, expected
+    assert_equal [2179], expected[12334633]
   end
+  # def test_it_can_get_totals_for_each_merchant_invoice_list
+  #   transactions = @s.successful_transactions
+  #   invoices = @s.invoices_by_transactions(transactions)
+  #   invoice_items = @s.invoice_items_by_invoices(invoices)
+  #   totaled_items = @s.invoice_items_total(invoice_items)
+  #   expected = @s.merchant_totals(totaled_items)
+  #
+  #   assert_instance_of Hash, expected
+  # end
   # invoice_items = @s.invoice_items_by_invoices(invoices)
   # expected = @s.
 
