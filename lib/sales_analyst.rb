@@ -210,11 +210,15 @@ class SalesAnalyst
     ids.map { |id| @sales_engine.invoice_items.find_all_by_invoice_id(id) }
   end
 
+  def quantity_by_unit_price_math(invoice_item)
+    quantity = invoice_item.quantity.to_s
+    unit_price = invoice_item.unit_price.to_s
+    quantity.to_f * unit_price.to_f
+  end
+
   def quantity_by_unit_price(invoice_items)
     invoice_items.map do |invoice_item|
-      quantity = invoice_item.quantity.to_s
-      unit_price = invoice_item.unit_price.to_s
-      quantity.to_f * unit_price.to_f
+      quantity_by_unit_price_math(invoice_item)
     end
   end
 
@@ -244,10 +248,19 @@ class SalesAnalyst
     end.flatten
   end
 
+  def invoice_items_total(invoice_items)
+    invoice_items.map do |invoice_item|
+      total_amount = quantity_by_unit_price_math(invoice_item)
+      invoice_item.invoice_items_specs.store(:total,total_amount)
+      invoice_item
+    end
+  end
+
   # def top_revenue_earners(number_of_earners = 20)
   #   transactions = successful_transactions
   #   invoices = invoices_by_transactions(transactions)
   #   invoice_items = invoice_items_by_invoices(invoices)
+  #   totaled_invoice_items = invoice_items_total(invoice_items)
   # end
 #Justine end work on iteration 4
 end

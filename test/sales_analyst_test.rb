@@ -177,8 +177,7 @@ class SalesAnalystTest < MiniTest::Test
     expected = @s.invoice_items_total(invoice_items)
 
     assert_equal 5, expected.length
-    assert_instance_of InvoiceItem, expected[0]
-    assert_equal 444.68, 
+    assert_equal 444.68, expected[0].invoice_items_specs[:total]
   end
   # invoice_items = @s.invoice_items_by_invoices(invoices)
   # expected = @s.
