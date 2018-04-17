@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'date'
 require_relative 'file_loader.rb'
 require_relative 'sales_analyst.rb'
 require_relative 'item_repository.rb'

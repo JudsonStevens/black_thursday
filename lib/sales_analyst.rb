@@ -3,6 +3,10 @@
 require_relative 'math_helper.rb'
 require 'time'
 
+require 'date'
+require 'pry'
+require 'sales_engine'
+
 # Sales analyst class to perform analysis.
 class SalesAnalyst
   include MathHelper
@@ -205,10 +209,9 @@ class SalesAnalyst
 # Justine start work on iteration 4
 
   def transactions_by_date(date)
-    date1 = date.to_date
     transactions = @sales_engine.transactions.all
-    dated = transactions.find_all do |transaction|
-      transaction.created_at.to_date == date1
+    transactions.find_all do |transaction|
+      transaction.created_at.to_date == date.to_date
     end
   end
 
@@ -220,7 +223,7 @@ class SalesAnalyst
 
   def successful_invoices_by_date(date)
     dated = transactions_by_date(date)
-    matches = dated & successful_transactions
+    dated & successful_transactions
   end
 
   def ids_of_successful_invoices_by_date(matches)
@@ -233,20 +236,83 @@ class SalesAnalyst
     ids.map { |id| @sales_engine.invoice_items.find_all_by_invoice_id(id) }
   end
 
+  def quantity_by_unit_price_math(invoice_item)
+    quantity = invoice_item.quantity.to_s
+    unit_price = invoice_item.unit_price.to_s
+    quantity.to_f * unit_price.to_f
+  end
+
   def quantity_by_unit_price(invoice_items)
-    result = invoice_items.map do |invoice_item|
-      quantity = invoice_item.quantity.to_s
-      unit_price = invoice_item.unit_price.to_s
-      quantity.to_f * unit_price.to_f
+    invoice_items.map do |invoice_item|
+      quantity_by_unit_price_math(invoice_item)
     end
-    result.reduce(:+)
+  end
+
+  def add_totals(results)
+    results.reduce(:+)
   end
 
   def total_revenue_by_date(date)
     invoices = successful_invoices_by_date(date)
     ids = ids_of_successful_invoices_by_date(invoices).uniq
     invoice_items = successful_dated_invoice_ids(ids).flatten
-    quantity_by_unit_price(invoice_items)
+    results = quantity_by_unit_price(invoice_items)
+    add_totals(results).round(2)
+  end
+
+  def invoices_by_transactions(transactions)
+    transactions.map do |transaction|
+      id = transaction.invoice_id
+      @sales_engine.invoices.find_by_id(id)
+    end.compact
+  end
+
+  def invoice_items_by_invoices(invoices)
+    invoices.map do |invoice|
+      invoice_id = invoice.id
+      @sales_engine.invoice_items.find_all_by_invoice_id(invoice_id)
+    end.flatten
+  end
+
+  def invoice_items_total(invoice_items)
+    invoice_items.map do |invoice_item|
+      total_amount = quantity_by_unit_price_math(invoice_item)
+      invoice_item.invoice_items_specs.store(:total, total_amount)
+      invoice_item
+    end
+  end
+
+  def add_invoice_totals(totaled_items)
+    ids = totaled_items.group_by do |invoice_item|
+      invoice_item.invoice_id
+    end
+     totals_by_invoice(ids)
+  end
+
+  def totals_by_invoice(merchant_ids)
+    merchant_totals = {}
+    merchant_ids.each do |key, value|
+      totals = value.map { |item| item.invoice_items_specs[:total] }
+      value = add_totals(totals)
+      merchant_totals[key] = value
+    end
+    merchant_totals
+  end
+
+  def merchants_high_to_low(merchant_totals, number)
+    sorted = merchant_totals.sort_by { |key, value| value }.reverse.to_h
+    top_earners = sorted.first(number).to_h
+    top_earners.map do |key, value|
+      @sales_engine.merchants.find_by_id(key)
+    end
+  end
+
+  def top_revenue_earners(number_of_earners = 20)
+    invoices = invoices_by_transactions(successful_transactions)
+    invoice_items = invoice_items_by_invoices(invoices)
+    totaled_invoice_items = invoice_items_total(invoice_items)
+    merchant_totals = add_invoice_totals(totaled_invoice_items)
+    merchants_high_to_low(merchant_totals, number_of_earners)
   end
 #Justine end work on iteration 4
 end
