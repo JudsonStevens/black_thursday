@@ -11,10 +11,12 @@ require_relative '../lib/sales_engine.rb'
 # Tests merchant repository method functionality
 class MerchantRepositoryTest < MiniTest::Test
   def setup
-    se = SalesEngine.from_csv({:customers => './fixtures/customers_test.csv',
+    se = SalesEngine.from_csv({:invoices => './fixtures/invoices_test.csv',
                                :merchants => './fixtures/merchants_test.csv',
-                               :invoices => './fixtures/invoices_test.csv',
-                               :items => './fixtures/items_test.csv'
+                               :items => './fixtures/items_test.csv',
+                               :customers => './fixtures/customers_test.csv',
+                               :transactions => './fixtures/transactions_test.csv',
+                               :invoice_items => './fixtures/invoice_items_test.csv'
       })
     @m = se.merchants
   end
@@ -37,9 +39,9 @@ class MerchantRepositoryTest < MiniTest::Test
     assert_equal expected, actual
   end
 
-  def test_it_can_find_all_by_merchant_id
+  def test_it_can_find_all_by_id
     expected = 'LolaMarleys'
-    actual = @m.find_all_by_merchant_id(12334115).first.name
+    actual = @m.find_all_by_id(12334115).first.name
 
     assert_equal expected, actual
   end

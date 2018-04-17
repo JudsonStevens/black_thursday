@@ -3,11 +3,20 @@
 require_relative 'invoice.rb'
 # This is the invoice repository.
 class InvoiceRepository
+  include RepositoryHelper
+  attr_reader :repository,
+              :customer_id,
+              :id,
+              :merchant_id,
+              :created_at,
+              :updated_at,
+              :successful_status,
+              :failed_status,
+              :status
   def initialize(invoices, parent)
     @repository = invoices.map { |invoice| Invoice.new(invoice, self) }
     @parent = parent
     build_hash_table
-    build_status_hash_table
   end
 
   def build_hash_table
@@ -16,33 +25,15 @@ class InvoiceRepository
     @merchant_id = @repository.group_by(&:merchant_id)
     @created_at = @repository.group_by(&:created_at)
     @updated_at = @repository.group_by(&:updated_at)
+    @status = @repository.group_by(&:status)
+    build_payment_status_hash_table
   end
 
-  def build_status_hash_table
+  def build_payment_status_hash_table
     @successful_status = @repository.group_by(&:is_paid_in_full?)
     @failed_status = @repository.group_by do |invoice|
       !invoice.is_paid_in_full?
     end
-  end
-
-  def find_by_id(id)
-    @id[id].first unless @id[id].nil?
-  end
-
-  def find_all_by_customer_id(cust_id)
-    @customer_id[cust_id]
-  end
-
-  def find_by_created_at(date)
-    @created_at[date].first
-  end
-
-  def find_all_by_created_at(date)
-    @created_at[date]
-  end
-
-  def all
-    @repository
   end
 
   def find_all_by_status(invoice_status)
@@ -51,13 +42,8 @@ class InvoiceRepository
     end
   end
 
-  def find_all_by_merchant_id(merchant_id)
-    @merchant_id[merchant_id]
-  end
-
   def create(attributes)
-    new_id = @id.keys.last + 1
-    attributes[:id] = new_id.to_s
+    attributes[:id] = (@id.keys.last + 1).to_s
     @repository << Invoice.new(attributes, self)
     build_hash_table
   end
@@ -78,10 +64,11 @@ class InvoiceRepository
         invoice.invoice_specs[:updated_at] = Time.now
       end
     end
+    build_hash_table
   end
 
-  def sort_by_invoice_totals
-    @repository.sort_by { |invoice| invoice.total }
+  def sort_by_invoice_total_revenue
+    @repository.sort_by(&:total)
   end
 
   def find_merchant_by_merchant_id(merchant_id)

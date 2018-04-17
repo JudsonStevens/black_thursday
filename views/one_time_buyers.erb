@@ -1,0 +1,22 @@
+<html>
+  <head>
+    <meta charset='UTF-8'>
+      <title>Customer Analytics</title>
+      <style>
+        body {
+          background-color: black;
+        }
+        h1 {
+          color: dodgerblue;
+          font-family: Monospace;    
+        }
+        </style>
+  </head>
+  <body>
+    <h1>
+    <% @one_time_customers.each do |customer| %>
+      <li><%= "#{customer.first_name} #{customer.last_name} is a one time buyer."%></li>
+    <% end %>
+    </h1>
+  </body>
+</html>

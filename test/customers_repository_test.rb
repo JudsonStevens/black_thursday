@@ -56,7 +56,12 @@ class CustomerRepositoryTest < MiniTest::Test
 
   def test_it_can_create_a_new_customer
     expected = 11
-    @c.create({first_name: "Olivia", last_name: "Newton"})
+    @c.create({
+      first_name: "Olivia",
+      last_name: "Newton",
+      created_at: Time.now,
+      updated_at: Time.now
+      })
     actual = @c.find_by_id(11).id
 
     assert_equal expected, actual

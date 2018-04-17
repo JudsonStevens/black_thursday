@@ -24,14 +24,14 @@ class TransactionRepositoryTest < Minitest::Test
   end
 
   def test_it_returns_all_transactions
-    expected = 10
+    expected = 13
     actual = @t.all.length
 
     assert_equal expected, actual
   end
 
   def test_it_finds_by_id
-    expected = "failed"
+    expected = :failed
     actual = @t.find_by_id(9).result
 
     assert_equal expected, actual
@@ -45,21 +45,21 @@ class TransactionRepositoryTest < Minitest::Test
   end
 
   def test_it_finds_all_by_result
-    expected = 9
-    actual = @t.find_all_by_result("success").length
+    expected = 11
+    actual = @t.find_all_by_result(:success).length
 
     assert_equal expected, actual
   end
 
   def test_it_finds_all_by_credit_card_number
-    expected = 1
+    expected = 2
     actual = @t.find_all_by_credit_card_number(4149654190362629).length
 
     assert_equal expected, actual
   end
 
   def test_it_can_update
-    expected = "failed"
+    expected = :failed
     @t.update(8, { result: "failed" })
     actual = @t.find_by_id(8).result
 
@@ -68,7 +68,7 @@ class TransactionRepositoryTest < Minitest::Test
 
   def test_it_can_create
     expected = 11
-    @t.create({ "invoice_id" => 1223, "result" => "success"})
+    @t.create({ "invoice_id" => 1223, result: "success", created_at: Time.now, updated_at: Time.now})
     actual = @t.find_by_id(11).id
 
     assert_equal expected, actual

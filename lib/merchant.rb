@@ -10,8 +10,8 @@ class Merchant
     @merchant_specs = {
       id:               merchants[:id].to_i,
       name:             merchants[:name],
-      created_at:       merchants[:created_at],
-      updated_at:       merchants[:updated_at]
+      created_at:       Time.parse(merchants[:created_at].to_s),
+      updated_at:       Time.parse(merchants[:updated_at].to_s)
     }
     @parent = parent
   end

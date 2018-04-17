@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'merchant.rb'
+require_relative 'repository_helper.rb'
 # This object holds all of the merchants. On initialization, we feed in the
 # seperated out list of merchants, which we obtained from the CSV file. For each
 # row, denoted here by the merchant variable, we insantiate a new item object
@@ -8,49 +9,48 @@ require_relative 'merchant.rb'
 # merchant_list isntance variable, allowing us to reference the list outside of
 # this class. The list is stored as an array.
 class MerchantRepository
+  include RepositoryHelper
   attr_reader :merchant_list,
-              :parent
+              :parent,
+              :id,
+              :name,
+              :created_at,
+              :updated_at
   def initialize(merchants, parent)
-    @merchant_list = merchants.map { |merchant| Merchant.new(merchant, self) }
+    @repository = merchants.map { |merchant| Merchant.new(merchant, self) }
     @parent = parent
+    build_hash_table
+  end
+
+  def build_hash_table
+    @id = @repository.group_by(&:id)
+    @name = @repository.group_by(&:name)
+    @created_at = @repository.group_by(&:created_at)
+    @updated_at = @repository.group_by(&:updated_at)
   end
 
   def create(attributes)
-    id_array = @merchant_list.map(&:id)
-    new_id = id_array.max + 1
-    attributes[:id] = new_id.to_s
-    @merchant_list << Merchant.new(attributes, self)
-  end
-
-  def find_by_id(id)
-    @merchant_list.find { |merchant| merchant.merchant_specs[:id] == id }
+    attributes[:id] = (@id.keys.sort.last + 1)
+    attributes[:created_at] = Time.now
+    attributes[:updated_at] = Time.now
+    @repository << Merchant.new(attributes, self)
+    build_hash_table
   end
 
   def find_by_name(name)
-    @merchant_list.find do |merchant|
-      merchant.searchable_name == name.downcase
-    end
-  end
-
-  def all
-    @merchant_list
+    @repository.find { |merchant| merchant.searchable_name == name.downcase }
   end
 
   def find_all_by_name(name)
-    @merchant_list.find_all do |merchant|
+    @repository.find_all do |merchant|
       merchant.searchable_name.include?(name.downcase)
-    end
-  end
-
-  def find_all_by_merchant_id(merchant_id)
-    @merchant_list.find_all do |merchant|
-      merchant.merchant_specs[:id] == merchant_id
     end
   end
 
   def delete(id)
     merchant_to_delete = find_by_id(id)
-    @merchant_list.delete(merchant_to_delete)
+    @repository.delete(merchant_to_delete)
+    build_hash_table
   end
 
   def update(id, attributes)
@@ -63,6 +63,7 @@ class MerchantRepository
         merchant.merchant_specs[:updated_at] = Time.now
       end
     end
+    build_hash_table
   end
 
   def find_items_by_merchant_id(merchant_id)
@@ -78,6 +79,6 @@ class MerchantRepository
   end
 
   def inspect
-    "<#{self.class} #{@merchant_list.size} rows>"
+    "<#{self.class} #{@repository.size} rows>"
   end
 end
