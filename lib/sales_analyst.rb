@@ -260,10 +260,10 @@ class SalesAnalyst
     ids = totaled_items.group_by do |invoice_item|
       invoice_item.invoice_id
     end
-    merchant_invoice_item_totals(ids)
+     totals_by_invoice(ids)
   end
-  
-  def merchant_invoice_item_totals(merchant_ids)
+
+  def totals_by_invoice(merchant_ids)
     merchant_totals = {}
     merchant_ids.each do |key, value|
       totals = value.map { |item| item.invoice_items_specs[:total] }
@@ -273,28 +273,20 @@ class SalesAnalyst
     merchant_totals
   end
 
-  def merchant_invoice_items
-    invoices = invoices_by_transactions(successful_transactions)
-    merchants_by_invoices = invoices.group_by do |invoice|
-      invoice.merchant_id
+  def merchants_high_to_low(merchant_totals, number)
+    sorted = merchant_totals.sort_by { |key, value| value }.reverse.to_h
+    top_earners = sorted.first(number).to_h
+    top_earners.map do |key, value|
+      @sales_engine.merchants.find_by_id(key)
     end
   end
-  #
-  # def merchant_invoice_id(merchants_by_invoices)
-  #   merchants_by_invoices.each do |merchant_id, invoice_array|
-  #     merchant_id = merchant_id
-  #     invoice_array = merchants_by_invoices.map { |invoice| invoice.id }
-  #   end
-  # end
-  # def merchant_totals(totaled_items)
-  #   merchant_invoice_items.group_by do |merchant|
-  #     merchant.
-  # end
-  # def top_revenue_earners(number_of_earners = 20)
-  #   transactions = successful_transactions
-  #   invoices = invoices_by_transactions(transactions)
-  #   invoice_items = invoice_items_by_invoices(invoices)
-  #   totaled_invoice_items = invoice_items_total(invoice_items)
-  # end
+
+  def top_revenue_earners(number_of_earners = 20)
+    invoices = invoices_by_transactions(successful_transactions)
+    invoice_items = invoice_items_by_invoices(invoices)
+    totaled_invoice_items = invoice_items_total(invoice_items)
+    merchant_totals = add_invoice_totals(totaled_invoice_items)
+    merchants_high_to_low(merchant_totals, number_of_earners)
+  end
 #Justine end work on iteration 4
 end

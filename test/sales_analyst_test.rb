@@ -188,49 +188,27 @@ class SalesAnalystTest < MiniTest::Test
     assert_equal 6943.18, expected[1]
   end
 
-  def test_it_can_get_invoice_items_ids_by_merchant
-    expected = @s.merchant_invoice_items
+  def test_it_returns_ordered_highest_merchant_to_lowest
+    invoices = @s.invoices_by_transactions(@s.successful_transactions)
+    invoice_items = @s.invoice_items_by_invoices(invoices)
+    totaled_items = @s.invoice_items_total(invoice_items)
+    merchant_totals = @s.add_invoice_totals(totaled_items)
+    expected = @s.merchants_high_to_low(merchant_totals, 2)
 
-    assert_instance_of Hash, expected
-    assert_instance_of Array, expected[12334633]
+    assert_equal 2, expected.length
+    assert_instance_of Array, expected
+    assert_instance_of Merchant, expected[0]
   end
-
-
-  def test_it_can_set_list_of_invoices_per_merchant
-    skip
-    merchants_by_invoices = @s.merchant_invoice_items
-    expected = merchant_invoice_id(merchants_by_invoices)
-
-    assert_instance_of Hash, expected
-    assert_equal [2179], expected[12334633]
-  end
-  # def test_it_can_get_totals_for_each_merchant_invoice_list
-  #   transactions = @s.successful_transactions
-  #   invoices = @s.invoices_by_transactions(transactions)
-  #   invoice_items = @s.invoice_items_by_invoices(invoices)
-  #   totaled_items = @s.invoice_items_total(invoice_items)
-  #   expected = @s.merchant_totals(totaled_items)
-  #
-  #   assert_instance_of Hash, expected
-  # end
-  # invoice_items = @s.invoice_items_by_invoices(invoices)
-  # expected = @s.
-
-  # def test_it_can_add_totals_to_invoice_items
-  #   skip
-  #   assert_equal 5570.75,
-  # end
 
   def test_reports_top_revenue_earners_by_number_given
-    skip
     expected = @s.top_revenue_earners(10)
     first = expected.first
     last = expected.last
 
-    assert_equal 10, expected.length
+    assert_equal 2, expected.length
     assert_equal Merchant, first.class
-    assert_equal 12334634, first.id
-    assert_equal 12335747, last.id
+    assert_equal 1, first.id
+    assert_equal 2179, last.id
   end
 # Justine end work on iteration 4
 end
