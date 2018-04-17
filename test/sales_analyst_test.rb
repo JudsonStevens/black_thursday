@@ -56,6 +56,7 @@ class SalesAnalystTest < MiniTest::Test
 
   def test_it_finds_max_price
     expected = 99999
+
     actual = @s.find_max_price
 
     assert_equal expected, actual
@@ -110,6 +111,11 @@ class SalesAnalystTest < MiniTest::Test
     assert_equal expected, actual
   end
 
+  def test_it_can_find_transactions_by_date
+    date = Time.parse('2012-03-27')
+    expected = @s.transactions_by_date(date)
+
+
   def test_it_can_return_top_merchant_by_invoice_count
     expected = 12334141
     actual = @s.top_merchants_by_invoice_count.first.id
@@ -142,22 +148,41 @@ class SalesAnalystTest < MiniTest::Test
     expected = [6, 729]
     actual = @s.day_count_hash.first
 
+  def test_it_can_return_successful_invoices_by_date
+    expected = @s.successful_invoices_by_date(Time.parse('2012-03-27'))
+
+
     assert_equal expected, actual
   end
+
 
   def test_it_can_return_the_standard_deviation_of_invoices_by_weekday
     expected = 16.73
     actual = @s.standard_deviation_of_invoices_by_weekday
 
+  def test_it_can_get_unique_ids_of_successful_transactions_on_date
+    dated_success = @s.successful_invoices_by_date(Time.parse('2012-03-27'))
+    expected = @s.ids_of_successful_invoices_by_date(dated_success)
+
+
     assert_equal expected, actual
   end
+
 
   def test_it_can_return_invoice_status
     expected = 13.5
     actual = @s.invoice_status(:returned)
 
+  def test_it_can_pull_invoice_items_of_ids_for_successful_dated
+    dated_success = @s.successful_invoices_by_date(Time.parse('2012-03-27'))
+    ids = @s.ids_of_successful_invoices_by_date(dated_success)
+    invoice_items = @s.successful_dated_invoice_ids(ids)
+    expected = invoice_items.flatten
+
+
     assert_equal expected, actual
   end
+
 
   def test_it_can_return_one_time_buyers
     expected = 27
@@ -170,8 +195,32 @@ class SalesAnalystTest < MiniTest::Test
     expected = 263442077
     actual = @s.one_time_buyers_top_items.first.id
 
+  def test_it_can_multiply_quantity_and_unit_price
+    dated_success = @s.successful_invoices_by_date(Time.parse('2012-03-27'))
+    ids = @s.ids_of_successful_invoices_by_date(dated_success)
+    invoice_items = @s.successful_dated_invoice_ids(ids)
+    items = invoice_items.flatten
+    result = @s.quantity_by_unit_price(items)
+
+    assert_equal 2, result.length
+  end
+
+  def test_it_can_add_results_of_quantity_by_unit_price
+    dated_success = @s.successful_invoices_by_date(Time.parse('2012-03-27'))
+    ids = @s.ids_of_successful_invoices_by_date(dated_success)
+    invoice_items = @s.successful_dated_invoice_ids(ids)
+    items = invoice_items.flatten
+    result = @s.quantity_by_unit_price(items)
+
+    assert_equal 3471.59, @s.add_totals(result)
+  end
+
+  def test_it_can_return_total_revenue_by_date
+    date = Time.parse('2012-03-27')
+
     assert_equal expected, actual
   end
+
 
   def test_it_returns_top_twenty_buyers
     expected = 20
@@ -258,4 +307,63 @@ class SalesAnalystTest < MiniTest::Test
   #
   #   assert_equal 3471.59, @s.total_revenue_by_date(date)
   # end
+
+  def test_it_can_pull_successful_transactions_invoices
+    expected = @s.invoices_by_transactions(@s.successful_transactions)
+
+    assert_equal 3, expected.length
+    assert_instance_of Invoice, expected[0]
+  end
+
+  def test_it_can_pull_invoices_items
+    invoices = @s.invoices_by_transactions(@s.successful_transactions)
+    expected = @s.invoice_items_by_invoices(invoices)
+
+    assert_equal 5, expected.length
+    assert_instance_of InvoiceItem, expected[0]
+  end
+
+  def test_it_can_find_total_cost_of_each_invoice_item
+    invoices = @s.invoices_by_transactions(@s.successful_transactions)
+    invoice_items = @s.invoice_items_by_invoices(invoices)
+    expected = @s.invoice_items_total(invoice_items)
+
+    assert_equal 5, expected.length
+    assert_equal 444.68, expected[0].invoice_items_specs[:total]
+  end
+
+  def test_it_can_group_invoice_items_by_id
+    invoices = @s.invoices_by_transactions(@s.successful_transactions)
+    invoice_items = @s.invoice_items_by_invoices(invoices)
+    totaled_items = @s.invoice_items_total(invoice_items)
+    expected = @s.add_invoice_totals(totaled_items)
+
+    assert_equal 2, expected.length
+    assert_instance_of Hash, expected
+    assert_equal 6943.18, expected[1]
+  end
+
+  def test_it_returns_ordered_highest_merchant_to_lowest
+    invoices = @s.invoices_by_transactions(@s.successful_transactions)
+    invoice_items = @s.invoice_items_by_invoices(invoices)
+    totaled_items = @s.invoice_items_total(invoice_items)
+    merchant_totals = @s.add_invoice_totals(totaled_items)
+    expected = @s.merchants_high_to_low(merchant_totals, 2)
+
+    assert_equal 2, expected.length
+    assert_instance_of Array, expected
+    assert_instance_of Merchant, expected[0]
+  end
+
+  def test_reports_top_revenue_earners_by_number_given
+    expected = @s.top_revenue_earners(10)
+    first = expected.first
+    last = expected.last
+
+    assert_equal 2, expected.length
+    assert_equal Merchant, first.class
+    assert_equal 1, first.id
+    assert_equal 2179, last.id
+  end
+# Justine end work on iteration 4
 end
