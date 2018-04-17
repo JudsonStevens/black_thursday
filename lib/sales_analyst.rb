@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 require 'time'
+require 'date'
 require 'pry'
+require 'sales_engine'
 # Sales analyst class to perform analysis.
 class SalesAnalyst
   attr_reader :sales_engine

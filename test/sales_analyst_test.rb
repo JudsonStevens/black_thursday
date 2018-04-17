@@ -13,10 +13,10 @@ require 'pry'
 class SalesAnalystTest < MiniTest::Test
   def setup
     @se = SalesEngine.from_csv(
-      items:      './data/items.csv',
-      merchants:  './data/merchants.csv',
+      items:      './fixtures/items_test.csv',
+      merchants:  './fixtures/merchants_test.csv',
       invoices:   './fixtures/invoices_test.csv',
-      customers:  './data/customers.csv',
+      customers:  './fixtures/customers_test.csv',
       transactions: './fixtures/transactions_test.csv',
       invoice_items: './fixtures/invoice_items_test.csv'
     )
@@ -49,7 +49,7 @@ class SalesAnalystTest < MiniTest::Test
   end
 
   def test_it_finds_max_price
-    expected = 99999
+    expected = 600
     actual = @s.find_max_price
 
     assert_equal expected, actual

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'date'
 require_relative 'file_loader.rb'
 require_relative 'sales_analyst.rb'
 require_relative 'item_repository.rb'
@@ -24,7 +25,7 @@ class SalesEngine
     @load_path = load_path
   end
 
-  def sales_analyst
+  def analyst
     SalesAnalyst.new(self)
   end
 
