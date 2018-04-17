@@ -26,7 +26,7 @@ class InvoiceRepositoryTest < MiniTest::Test
 
   def test_it_finds_by_id
     expected = 1
-    actual = @i.find_by_id(1).customer_id
+    actual = @i.find_by_id(1).invoice_specs[:customer_id]
 
     assert_equal expected, actual
   end
@@ -54,7 +54,7 @@ class InvoiceRepositoryTest < MiniTest::Test
 
   def test_it_can_create_a_new_invoice
     expected = 10
-    @i.create(merchant_id: 15, customer_id: 22)
+    @i.create(merchant_id: 15, customer_id: 22, created_at: Time.now, updated_at: Time.now)
     actual = @i.find_by_id(10).id
 
     assert_equal expected, actual
@@ -68,7 +68,7 @@ class InvoiceRepositoryTest < MiniTest::Test
 
   def test_it_can_update_an_invoice
     expected = :shipped
-    @i.update(1, {status: "shipped"})
+    @i.update(1, status: 'shipped')
     actual = @i.find_by_id(1).status
 
     assert_equal expected, actual

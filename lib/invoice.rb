@@ -34,11 +34,11 @@ class Invoice
   end
 
   def created_at
-    Time.parse(@invoice_specs[:created_at])
+    Time.parse(@invoice_specs[:created_at].to_s)
   end
 
   def updated_at
-    Time.parse(@invoice_specs[:updated_at])
+    Time.parse(@invoice_specs[:updated_at].to_s)
   end
 
   def merchant
