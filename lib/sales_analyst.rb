@@ -100,13 +100,6 @@ class SalesAnalyst
     ((amount.to_f / total) * 100).round(2)
   end
 
-  # def find_status_hash(status_symbol)
-  #   @sales_engine.invoices.status[status_symbol]
-  #   all_status = @sales_engine.invoices.all.map(&:status)
-  #   group = all_status.group_by { |status| status }
-  #   group.each { |key, value| group[key] = value.length }
-  # end
-
   def invoice_total(invoice_id)
     items = @sales_engine.invoice_items.find_all_by_invoice_id(invoice_id)
     items.map(&:possible_revenue).inject(:+)
