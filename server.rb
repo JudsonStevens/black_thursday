@@ -37,4 +37,9 @@ get '/top-buyers:number' do
   erb :top_buyers
 end
 
-def
+get '/one-time-buyer-top-item' do
+  run_setup
+  @one_time_buyers_top_item = @sales_analyst.one_time_buyers_top_item
+
+  erb :one_time_buyers_top_item
+end

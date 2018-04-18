@@ -113,7 +113,11 @@ class SalesAnalystTest < MiniTest::Test
 
   def test_it_can_find_transactions_by_date
     date = Time.parse('2012-03-27')
-    expected = @s.transactions_by_date(date)
+    expected = ''
+    actual = @s.transactions_by_date(date)
+
+    assert_equal expected, actual
+  end
 
 
   def test_it_can_return_top_merchant_by_invoice_count
@@ -148,30 +152,37 @@ class SalesAnalystTest < MiniTest::Test
     expected = [6, 729]
     actual = @s.day_count_hash.first
 
-  def test_it_can_return_successful_invoices_by_date
-    expected = @s.successful_invoices_by_date(Time.parse('2012-03-27'))
-
-
     assert_equal expected, actual
   end
 
+  def test_it_can_return_successful_invoices_by_date
+    expected = ''
+    actual = @s.successful_invoices_by_date(Time.parse('2012-03-27'))
+
+    assert_equal expected, actual
+  end
 
   def test_it_can_return_the_standard_deviation_of_invoices_by_weekday
     expected = 16.73
     actual = @s.standard_deviation_of_invoices_by_weekday
 
+    assert_equal expected, actual
+  end
+
   def test_it_can_get_unique_ids_of_successful_transactions_on_date
     dated_success = @s.successful_invoices_by_date(Time.parse('2012-03-27'))
-    expected = @s.ids_of_successful_invoices_by_date(dated_success)
-
+    expected = ''
+    actual = @s.ids_of_successful_invoices_by_date(dated_success)
 
     assert_equal expected, actual
   end
 
-
   def test_it_can_return_invoice_status
     expected = 13.5
     actual = @s.invoice_status(:returned)
+
+    assert_equal expected, actual
+  end
 
   def test_it_can_pull_invoice_items_of_ids_for_successful_dated
     dated_success = @s.successful_invoices_by_date(Time.parse('2012-03-27'))
@@ -179,10 +190,8 @@ class SalesAnalystTest < MiniTest::Test
     invoice_items = @s.successful_dated_invoice_ids(ids)
     expected = invoice_items.flatten
 
-
     assert_equal expected, actual
   end
-
 
   def test_it_can_return_one_time_buyers
     expected = 27
@@ -193,7 +202,10 @@ class SalesAnalystTest < MiniTest::Test
 
   def test_it_can_return_one_time_buyers_top_item
     expected = 263442077
-    actual = @s.one_time_buyers_top_items.first.id
+    actual = @s.one_time_buyers_top_item.id
+
+    assert_equal expected, actual
+  end
 
   def test_it_can_multiply_quantity_and_unit_price
     dated_success = @s.successful_invoices_by_date(Time.parse('2012-03-27'))
@@ -215,21 +227,9 @@ class SalesAnalystTest < MiniTest::Test
     assert_equal 3471.59, @s.add_totals(result)
   end
 
-  def test_it_can_return_total_revenue_by_date
-    date = Time.parse('2012-03-27')
-
-    assert_equal expected, actual
-  end
-
-
   def test_it_returns_top_twenty_buyers
     expected = 20
     actual = @s.top_buyers.length
-
-    assert_equal expected, actual
-
-    expected = 313
-    actual = @s.top_buyers.first.id
 
     assert_equal expected, actual
   end
@@ -365,5 +365,11 @@ class SalesAnalystTest < MiniTest::Test
     assert_equal 1, first.id
     assert_equal 2179, last.id
   end
-# Justine end work on iteration 4
+
+  def test_it_can_return_total_revenue_by_merchant
+    expected = 123696.45
+    actual = @s.revenue_by_merchant(12334141).to_f
+
+    assert_equal expected, actual
+  end
 end
