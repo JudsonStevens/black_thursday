@@ -23,7 +23,7 @@ class ItemRepositoryTest < Minitest::Test
   end
 
   def test_all_returns_all_items
-    assert_equal 5, items.all.length
+    assert_equal 75, items.all.length
   end
 
   def test_it_finds_item_by_id
@@ -71,9 +71,8 @@ class ItemRepositoryTest < Minitest::Test
     expected = items.find_all_by_price_in_range(11.99..50.00)
 
     assert_instance_of Array, expected
-    assert_equal 4, expected.length
+    assert_equal 33, expected.length
   end
-
 
   def test_find_all_merchant_items_by_id
     expected = items.find_all_by_merchant_id(92929)
@@ -93,12 +92,12 @@ class ItemRepositoryTest < Minitest::Test
       updated_at: '2008-04-02 13:48:57 UTC' })
 
     assert_instance_of Hash, expected
-    assert_equal 6, items.all.length
+    assert_equal 76, items.all.length
   end
 
   def test_it_can_delete_item_by_id
     items.delete(92929)
 
-    assert_equal 5, items.all.length
+    assert_equal 75, items.all.length
   end
 end

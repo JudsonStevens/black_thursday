@@ -23,7 +23,7 @@ class InvoiceItemRepositorytest < Minitest::Test
   end
 
   def test_it_can_find_all
-    assert_equal 3, @invoice_items.all.length
+    assert_equal 4, @invoice_items.all.length
   end
 
   def test_it_returns_nil_for_invalid_id
@@ -75,8 +75,8 @@ class InvoiceItemRepositorytest < Minitest::Test
       updated_at: '2012-03-27 12:54:09 UTC' })
     expected = @invoice_items.find_all_by_invoice_id(8).first
 
-    assert_equal 4, expected.id
-    assert_equal 4, invoice_items.all.length
+    assert_equal 5, expected.id
+    assert_equal 5, invoice_items.all.length
   end
 
   def test_it_can_update_id_and_attributes
