@@ -72,14 +72,41 @@ module CustomerAnalytics
     invoices.sort_by { |_, value| value || 0 }.reverse.flatten.first
   end
 
-  def one_time_buyers_top_items
-    items = one_time_buyers.map { |customer| highest_volume_items(customer.id) }
-    items.flatten.group_by(&:id).max_by { |_, v| v.length }[1].uniq
+  def one_time_buyers_top_item
+    @sales_engine.items.find_by_id(list_of_one_time_buyers_items[0])
+  end
+
+  def list_of_one_time_buyers_items
+    items = one_time_buyers.map { |customer| return_high_volume_items(customer.id) }
+    item_hash = return_item_ids_with_quantity(items)
+    item_hash.max_by { |_, v| v.inject(:+) }
+  end
+
+  def return_item_ids_with_quantity(items)
+    new_hash = {}
+    items.flatten(1).each do |element|
+      if new_hash[element[0]]
+        new_hash[element[0]] << element[1]
+      else
+        new_hash[element[0]] = [] << element[1]
+      end
+    end
+    new_hash
+  end
+
+  def return_high_volume_items(customer_id)
+    invoices_with_item_amounts(customer_id)
   end
 
   def highest_volume_items(customer_id)
     high_volume = invoices_with_item_amounts(customer_id).group_by(&:last).max
     calculate_high_volume_items(high_volume)
+  end
+
+  def calculate_high_volume_items(high_volume_array)
+    high_volume_array.flatten(1).drop(1).map do |item_array|
+      @sales_engine.items.find_by_id(item_array[0])
+    end
   end
 
   def invoices_with_item_amounts(customer_id)
@@ -88,12 +115,6 @@ module CustomerAnalytics
         [invoice_item.item_id, invoice_item.quantity]
       end
     end.compact.flatten(1)
-  end
-
-  def calculate_high_volume_items(high_volume_array)
-    high_volume_array.flatten(1).drop(1).map do |item_array|
-      @sales_engine.items.find_by_id(item_array[0])
-    end
   end
 
   def items_bought_in_year(customer_id, year)
