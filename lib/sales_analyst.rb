@@ -3,9 +3,16 @@
 require_relative 'math_helper.rb'
 require_relative 'analysis_helper.rb'
 require_relative 'customer_analytics.rb'
+<<<<<<< HEAD
+require_relative 'sales_engine'
+require 'time'
+require 'date'
+require 'pry'
+=======
 require_relative 'merchant_analytics.rb'
 require 'time'
 require 'date'
+>>>>>>> c26106f61539a64514a6857b5f88441f358ff7d8
 
 # Sales analyst class to perform analysis.
 class SalesAnalyst
@@ -14,6 +21,7 @@ class SalesAnalyst
   include AnalysisHelper
   include MerchantAnalytics
   attr_reader :sales_engine
+
   def initialize(sales_engine)
     @sales_engine = sales_engine
   end
@@ -115,6 +123,17 @@ class SalesAnalyst
     transactions.any? { |transaction| transaction.result == :success }
   end
 
+<<<<<<< HEAD
+  def best_invoice_by_quantity
+    x = @sales_engine.invoices.all.map do |invoice|
+      if invoice.is_paid_in_full?
+        [invoice, invoice.invoice_items.map(&:quantity).inject(:+)]
+      end
+    end.sort_by { |_, value| value || 0 }.reverse
+  end
+
+=======
+>>>>>>> c26106f61539a64514a6857b5f88441f358ff7d8
   def transactions_by_date(date)
     transactions = @sales_engine.transactions.all
     transactions.find_all do |transaction|
@@ -124,7 +143,103 @@ class SalesAnalyst
 
   def successful_transactions
     @sales_engine.transactions.all.find_all do |transaction|
-      transaction.result == 'success'
+      transaction.result == :success
     end
   end
+<<<<<<< HEAD
+
+  def successful_invoices_by_date(date)
+    dated = transactions_by_date(date)
+    dated & successful_transactions
+  end
+
+  def ids_of_successful_invoices_by_date(matches)
+    matches.map do |transaction|
+      transaction.invoice_id
+    end.uniq
+  end
+
+  def successful_dated_invoice_ids(ids)
+    ids.map { |id| @sales_engine.invoice_items.find_all_by_invoice_id(id) }
+  end
+
+  def quantity_by_unit_price_math(invoice_item)
+    quantity = invoice_item.quantity.to_s
+    unit_price = invoice_item.unit_price.to_s
+    quantity.to_f * unit_price.to_f
+  end
+
+  def quantity_by_unit_price(invoice_items)
+    invoice_items.map do |invoice_item|
+      quantity_by_unit_price_math(invoice_item)
+    end
+  end
+
+  def add_totals(results)
+    results.reduce(:+)
+  end
+
+  def total_revenue_by_date(date)
+    invoices = successful_invoices_by_date(date)
+    ids = ids_of_successful_invoices_by_date(invoices).uniq
+    invoice_items = successful_dated_invoice_ids(ids).flatten
+    results = quantity_by_unit_price(invoice_items)
+    add_totals(results).round(2)
+  end
+
+  def invoices_by_transactions(transactions)
+    transactions.map do |transaction|
+      id = transaction.invoice_id
+      @sales_engine.invoices.find_by_id(id)
+    end.compact
+  end
+
+  def invoice_items_by_invoices(invoices)
+    invoices.map do |invoice|
+      invoice_id = invoice.id
+      @sales_engine.invoice_items.find_all_by_invoice_id(invoice_id)
+    end.flatten
+  end
+
+  def invoice_items_total(invoice_items)
+    invoice_items.map do |invoice_item|
+      total_amount = quantity_by_unit_price_math(invoice_item)
+      invoice_item.invoice_items_specs.store(:total, total_amount)
+      invoice_item
+    end
+  end
+
+  def add_invoice_totals(totaled_items)
+    ids = totaled_items.group_by do |&invoice_id|
+    end
+    totals_by_invoice(ids)
+  end
+
+  def totals_by_invoice(merchant_ids)
+    merchant_totals = {}
+    merchant_ids.each do |key, value|
+      totals = value.map { |item| item.invoice_items_specs[:total] }
+      value = add_totals(totals)
+      merchant_totals[key] = value
+    end
+    merchant_totals
+  end
+
+  def merchants_high_to_low(merchant_totals, number)
+    sorted = merchant_totals.sort_by { |key, value| value }.reverse.to_h
+    top_earners = sorted.first(number).to_h
+    top_earners.map do |key, value|
+      @sales_engine.merchants.find_by_id(key)
+    end
+  end
+
+  def top_revenue_earners(number_of_earners = 20)
+    invoices = invoices_by_transactions(successful_transactions)
+    invoice_items = invoice_items_by_invoices(invoices)
+    totaled_invoice_items = invoice_items_total(invoice_items)
+    merchant_totals = add_invoice_totals(totaled_invoice_items)
+    merchants_high_to_low(merchant_totals, number_of_earners)
+  end
+=======
+>>>>>>> c26106f61539a64514a6857b5f88441f358ff7d8
 end
