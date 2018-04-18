@@ -216,4 +216,26 @@ class SalesAnalystTest < MiniTest::Test
 
     assert_equal expected, actual
   end
+
+  def test_it_returns_most_sold_item_for_merchant
+    expected = @s.most_sold_item_for_merchant(12334112)
+
+    assert_instance_of Array, expected
+    assert_instance_of Item, expected[0]
+    assert_equal 1, expected.length
+  end
+
+  def test_it_returns_item_hash_with_ids_and_quantities
+    expected = @s.return_item_hash_with_ids_and_quantities(12334112)
+
+    assert_instance_of Hash, expected
+    assert_equal 20, expected.length
+    assert_equal 263425975, expected.keys[0]
+  end
+
+  def test_it_returns_revenue_by_merchant
+    expected = @s.revenue_by_merchant(12334112)
+
+    assert_equal 0.6729583e5, expected
+  end
 end
