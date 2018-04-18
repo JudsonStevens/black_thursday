@@ -216,4 +216,22 @@ class SalesAnalyst
     merchant_totals = add_invoice_totals(totaled_invoice_items)
     merchants_high_to_low(merchant_totals, number_of_earners)
   end
+
+  def best_item_for_merchant(merchant_id)
+    item_id_and_revenue = return_invoices_with_totals(merchant_id)
+    item_id = item_id_and_revenue.flatten(1).max_by(&:last)[0]
+    @sales_engine.items.find_by_id(item_id)
+  end
+
+  def return_invoices_with_totals(merchant_id)
+    @sales_engine.invoices.merchant_id[merchant_id].map do |invoice|
+      return_all_items_by_invoice_id(invoice.id) if invoice.is_paid_in_full?
+    end.compact
+  end
+
+  def return_all_items_by_invoice_id(invoice_id)
+    @sales_engine.invoice_items.invoice_id[invoice_id].map do |invoice_item|
+      [invoice_item.item_id, invoice_item.possible_revenue]
+    end.compact
+  end
 end

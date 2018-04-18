@@ -77,7 +77,7 @@ module CustomerAnalytics
   end
 
   def list_of_one_time_buyers_items
-    items = one_time_buyers.map { |customer| highest_volume_items(customer.id) }
+    items = one_time_buyers.map { |customer| return_high_volume_items(customer.id) }
     item_hash = return_item_ids_with_quantity(items)
     item_hash.max_by { |_, v| v.inject(:+) }
   end
@@ -94,8 +94,19 @@ module CustomerAnalytics
     new_hash
   end
 
-  def highest_volume_items(customer_id)
+  def return_high_volume_items(customer_id)
     invoices_with_item_amounts(customer_id)
+  end
+
+  def highest_volume_items(customer_id)
+    high_volume = invoices_with_item_amounts(customer_id).group_by(&:last).max
+    calculate_high_volume_items(high_volume)
+  end
+
+  def calculate_high_volume_items(high_volume_array)
+    high_volume_array.flatten(1).drop(1).map do |item_array|
+      @sales_engine.items.find_by_id(item_array[0])
+    end
   end
 
   def invoices_with_item_amounts(customer_id)
