@@ -3,10 +3,10 @@
 require_relative 'math_helper.rb'
 require_relative 'analysis_helper.rb'
 require_relative 'customer_analytics.rb'
+require_relative 'sales_engine'
 require 'time'
 require 'date'
 require 'pry'
-require 'sales_engine'
 
 # Sales analyst class to perform analysis.
 class SalesAnalyst
@@ -14,6 +14,7 @@ class SalesAnalyst
   include MathHelper
   include AnalysisHelper
   attr_reader :sales_engine
+
   def initialize(sales_engine)
     @sales_engine = sales_engine
   end
@@ -124,7 +125,6 @@ class SalesAnalyst
       end
     end.sort_by { |_, value| value || 0 }.reverse
   end
-# Justine start work on iteration 4
 
   def transactions_by_date(date)
     transactions = @sales_engine.transactions.all
@@ -135,7 +135,7 @@ class SalesAnalyst
 
   def successful_transactions
     @sales_engine.transactions.all.find_all do |transaction|
-      transaction.result == 'success'
+      transaction.result == :success
     end
   end
 
@@ -201,10 +201,9 @@ class SalesAnalyst
   end
 
   def add_invoice_totals(totaled_items)
-    ids = totaled_items.group_by do |invoice_item|
-      invoice_item.invoice_id
+    ids = totaled_items.group_by do |&invoice_id|
     end
-     totals_by_invoice(ids)
+    totals_by_invoice(ids)
   end
 
   def totals_by_invoice(merchant_ids)
