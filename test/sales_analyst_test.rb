@@ -238,4 +238,39 @@ class SalesAnalystTest < MiniTest::Test
 
     assert_equal 0.6729583e5, expected
   end
+
+  def test_it_can_tell_if_an_invoice_is_paid_in_full
+    expected = true
+    actual = @s.invoice_paid_in_full?(10)
+
+    assert_equal expected, actual
+  end
+
+  def test_it_can_return_customers_who_have_unpaid_invoices
+    expected = 786
+    actual = @s.customers_with_unpaid_invoices.length
+
+    assert_equal expected, actual
+  end
+
+  def test_it_can_return_best_invoice_by_revenue
+    expected = 3394
+    actual = @s.best_invoice_by_revenue.id
+
+    assert_equal expected, actual
+  end
+
+  def test_it_can_return_highest_volume_items_by_customer_id
+    expected = 263524984
+    actual = @s.highest_volume_items(15).first.id
+
+    assert_equal expected, actual
+  end
+
+  def test_it_can_find_items_sold_by_year
+    expected = 263549742
+    actual = @s.find_items_sold_by_year(400, 2002).first
+
+    assert_equal expected, actual
+  end
 end

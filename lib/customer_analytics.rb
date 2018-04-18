@@ -77,7 +77,9 @@ module CustomerAnalytics
   end
 
   def list_of_one_time_buyers_items
-    items = one_time_buyers.map { |customer| return_high_volume_items(customer.id) }
+    items = one_time_buyers.map do |customer|
+      return_high_volume_items(customer.id)
+    end
     item_hash = return_item_ids_with_quantity(items)
     item_hash.max_by { |_, v| v.inject(:+) }
   end
