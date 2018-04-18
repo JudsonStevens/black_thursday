@@ -22,18 +22,16 @@ end
 
 get '/one-time-buyers' do
   run_setup
-  @path = 'one_time_buyers'
   @one_time_customers = @sales_analyst.one_time_buyers
 
   erb :one_time_buyers
 end
 
-get '/:customer_analytics' do
+get '/top-buyers:number' do
   run_setup
-  parameters = params[:customer_analytics].split('-')
-  @path = parameters[0] + '-' + parameters[1]
-  num_of_customers = parameters[2] unless parameters[2].nil?
   num_of_customers = 20
+  path = params[:number].split('-')[1]
+  num_of_customers = path.to_i unless params[:number].nil?
   @top_buyers = @sales_analyst.top_buyers(num_of_customers)
 
   erb :top_buyers

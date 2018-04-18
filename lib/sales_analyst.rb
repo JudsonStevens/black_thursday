@@ -3,10 +3,9 @@
 require_relative 'math_helper.rb'
 require_relative 'analysis_helper.rb'
 require_relative 'customer_analytics.rb'
+require_relative 'sales_engine.rb'
 require 'time'
 require 'date'
-require 'pry'
-require 'sales_engine'
 
 # Sales analyst class to perform analysis.
 class SalesAnalyst
@@ -107,24 +106,13 @@ class SalesAnalyst
   def invoice_total(invoice_id)
     items = @sales_engine.invoice_items.find_all_by_invoice_id(invoice_id)
     items.map(&:possible_revenue).inject(:+)
-    all_items = @sales_engine.invoice_items.find_all_by_invoice_id(invoice_id)
-    all_items.map(&:unit_price).inject(:+)
   end
 
   def invoice_paid_in_full?(invoice_id)
     invoice = @sales_engine.invoices.find_by_id(invoice_id)
     transactions = invoice.transactions
-    transactions.any? { |transaction| transaction.result == 'success' }
+    transactions.any? { |transaction| transaction.result == :success }
   end
-
-  def best_invoice_by_quantity
-    x = @sales_engine.invoices.all.map do |invoice|
-      if invoice.is_paid_in_full?
-        [invoice, invoice.invoice_items.map(&:quantity).inject(:+)]
-      end
-    end.sort_by { |_, value| value || 0 }.reverse
-  end
-# Justine start work on iteration 4
 
   def transactions_by_date(date)
     transactions = @sales_engine.transactions.all
@@ -145,9 +133,7 @@ class SalesAnalyst
   end
 
   def ids_of_successful_invoices_by_date(matches)
-    matches.map do |transaction|
-      transaction.invoice_id
-    end.uniq
+    matches.map(&:invoice_id).uniq
   end
 
   def successful_dated_invoice_ids(ids)
@@ -201,10 +187,8 @@ class SalesAnalyst
   end
 
   def add_invoice_totals(totaled_items)
-    ids = totaled_items.group_by do |invoice_item|
-      invoice_item.invoice_id
-    end
-     totals_by_invoice(ids)
+    ids = totaled_items.group_by(&:invoice_id)
+    totals_by_invoice(ids)
   end
 
   def totals_by_invoice(merchant_ids)
@@ -218,9 +202,9 @@ class SalesAnalyst
   end
 
   def merchants_high_to_low(merchant_totals, number)
-    sorted = merchant_totals.sort_by { |key, value| value }.reverse.to_h
+    sorted = merchant_totals.sort_by { |_, value| value }.reverse.to_h
     top_earners = sorted.first(number).to_h
-    top_earners.map do |key, value|
+    top_earners.map do |key, _|
       @sales_engine.merchants.find_by_id(key)
     end
   end
