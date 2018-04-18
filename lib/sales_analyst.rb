@@ -3,16 +3,23 @@
 require_relative 'math_helper.rb'
 require_relative 'analysis_helper.rb'
 require_relative 'customer_analytics.rb'
+<<<<<<< HEAD
 require_relative 'sales_engine'
 require 'time'
 require 'date'
 require 'pry'
+=======
+require_relative 'merchant_analytics.rb'
+require 'time'
+require 'date'
+>>>>>>> c26106f61539a64514a6857b5f88441f358ff7d8
 
 # Sales analyst class to perform analysis.
 class SalesAnalyst
   include CustomerAnalytics
   include MathHelper
   include AnalysisHelper
+  include MerchantAnalytics
   attr_reader :sales_engine
 
   def initialize(sales_engine)
@@ -108,16 +115,15 @@ class SalesAnalyst
   def invoice_total(invoice_id)
     items = @sales_engine.invoice_items.find_all_by_invoice_id(invoice_id)
     items.map(&:possible_revenue).inject(:+)
-    all_items = @sales_engine.invoice_items.find_all_by_invoice_id(invoice_id)
-    all_items.map(&:unit_price).inject(:+)
   end
 
   def invoice_paid_in_full?(invoice_id)
     invoice = @sales_engine.invoices.find_by_id(invoice_id)
     transactions = invoice.transactions
-    transactions.any? { |transaction| transaction.result == 'success' }
+    transactions.any? { |transaction| transaction.result == :success }
   end
 
+<<<<<<< HEAD
   def best_invoice_by_quantity
     x = @sales_engine.invoices.all.map do |invoice|
       if invoice.is_paid_in_full?
@@ -126,6 +132,8 @@ class SalesAnalyst
     end.sort_by { |_, value| value || 0 }.reverse
   end
 
+=======
+>>>>>>> c26106f61539a64514a6857b5f88441f358ff7d8
   def transactions_by_date(date)
     transactions = @sales_engine.transactions.all
     transactions.find_all do |transaction|
@@ -138,6 +146,7 @@ class SalesAnalyst
       transaction.result == :success
     end
   end
+<<<<<<< HEAD
 
   def successful_invoices_by_date(date)
     dated = transactions_by_date(date)
@@ -231,4 +240,6 @@ class SalesAnalyst
     merchant_totals = add_invoice_totals(totaled_invoice_items)
     merchants_high_to_low(merchant_totals, number_of_earners)
   end
+=======
+>>>>>>> c26106f61539a64514a6857b5f88441f358ff7d8
 end

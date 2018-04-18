@@ -54,9 +54,9 @@ class InvoiceRepositoryTest < MiniTest::Test
   end
 
   def test_it_can_create_a_new_invoice
-    expected = 10
+    expected = 2180
     @i.create(merchant_id: 15, customer_id: 22, status: 'shipped', created_at: Time.now, updated_at: Time.now)
-    actual = @i.find_by_id(10).id
+    actual = @i.find_by_id(2180).id
 
     assert_equal expected, actual
   end
